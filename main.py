@@ -1,5 +1,8 @@
 from player import *
 
+volume = [True, True, True, 2]
+background_music[volume[3]].play(-1)
+
 def draw_img(screen, img, x, y):
     screen.blit(img, (x, y))
 
@@ -27,7 +30,6 @@ def draw_text_center(screen, font, text, color, x, y, idx = -1):
     text_rect = text.get_rect(center=(x, y))
     screen.blit(text, text_rect)
 
-pygame.init()
 WIDTH, HEIGHT = 1600, 900
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Pikachu Game")
@@ -70,7 +72,6 @@ def save_data():
             "lose": player.lose,
             "grid": player.grid
         }
-    print([player.grid for player in players])
     with open("players.json", "w") as f:
         json.dump(players_data, f, indent = 4)
 
@@ -186,7 +187,7 @@ def login_func():
         if exit_idx != -1:
             exit_idx += 1
         if mess_counter > 0:
-            draw_text_center(screen, font_reg, mess, RED, WIDTH // 2, HEIGHT // 2.3 + HEIGHT // 8 * 3)
+            draw_text_center(screen, font_reg, mess, RED, WIDTH // 2, HEIGHT // 2.3 + HEIGHT // 8 * 2.5)
             mess_counter -= 1
         pygame.display.flip()
         pygame.time.delay(15)
@@ -343,117 +344,9 @@ def register_func():
     pygame.quit()
     sys.exit()
     
-def guest_func():
-    # continue, new game, change mode, crosshair, setting, exit
-    continue_idx, newgame_idx, changemode_idx, crosshair_idx, setting_idx, exit_idx = -1, -1, -1, -1, -1, -1
-    running = True
-    while running:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                running = False
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                if continue_button.collidepoint(*event.pos):
-                    print("Continue")
-                    return -1
-                if newgame_button.collidepoint(*event.pos):
-                    print("New game")
-                    return -1
-                if changemode_button.collidepoint(*event.pos):
-                    print("Change mode")
-                    return -1
-                if crosshair_button.collidepoint(*event.pos):
-                    print("Crosshair")
-                    return -1
-                if setting_button.collidepoint(*event.pos):
-                    print("Setting")
-                    return -1
-                if exit_button.collidepoint(*event.pos):
-                    print("Exit")
-                    return -1
-        # draw
-        mouse_x, mouse_y = pygame.mouse.get_pos()
-        x_ratio = mouse_x / WIDTH
-        y_ratio = mouse_y / HEIGHT
-        bg_x = -int((bg_width - WIDTH) * x_ratio)
-        bg_y = -int((bg_height - HEIGHT) * y_ratio)
-        bg_x = max(min(bg_x, 0), WIDTH - bg_width)
-        bg_y = max(min(bg_y, 0), HEIGHT - bg_height)
-        screen.blit(background, (bg_x, bg_y))
-        draw_text_center(screen, font_logo, "PIKACHU GAME", GRAY, WIDTH // 2, HEIGHT // 4)
-        
-        # draw button
-        continue_button = pygame.Rect(WIDTH // 4 - button.get_width() // 2, HEIGHT // 2.5 - button.get_height() // 2, button.get_width(), button.get_height())
-        newgame_button = pygame.Rect(WIDTH // 4 - button.get_width() // 2, HEIGHT // 2.5 + HEIGHT // 10 - button.get_height() // 2, button.get_width(), button.get_height())
-        changemode_button = pygame.Rect(WIDTH // 4 - button.get_width() // 2, HEIGHT // 2.5 + HEIGHT // 10 * 2 - button.get_height() // 2, button.get_width(), button.get_height())
-        crosshair_button = pygame.Rect(WIDTH // 4 - button.get_width() // 2, HEIGHT // 2.5 + HEIGHT // 10 * 3 - button.get_height() // 2, button.get_width(), button.get_height())
-        setting_button = pygame.Rect(WIDTH // 4 - button.get_width() // 2, HEIGHT // 2.5 + HEIGHT // 10 * 4 - button.get_height() // 2, button.get_width(), button.get_height())
-        exit_button = pygame.Rect(WIDTH // 4 - (button.get_width() - med_button.get_width()) // 2 - med_button.get_width() // 2, HEIGHT // 2.5 + HEIGHT // 10 * 5 - med_button.get_height() // 2, 150, 50)
-        draw_img_center(screen, button_pressed if continue_button.collidepoint(*pygame.mouse.get_pos()) else button, WIDTH // 4, HEIGHT // 2.5)
-        draw_img_center(screen, button_pressed if newgame_button.collidepoint(*pygame.mouse.get_pos()) else button, WIDTH // 4, HEIGHT // 2.5 + HEIGHT // 10)
-        draw_img_center(screen, button_pressed if changemode_button.collidepoint(*pygame.mouse.get_pos()) else button, WIDTH // 4, HEIGHT // 2.5 + HEIGHT // 10 * 2)
-        draw_img_center(screen, button_pressed if crosshair_button.collidepoint(*pygame.mouse.get_pos()) else button, WIDTH // 4, HEIGHT // 2.5 + HEIGHT // 10 * 3)
-        draw_img_center(screen, button_pressed if setting_button.collidepoint(*pygame.mouse.get_pos()) else button, WIDTH // 4, HEIGHT // 2.5 + HEIGHT // 10 * 4)
-        draw_img_center(screen, med_button_pressed if exit_button.collidepoint(*pygame.mouse.get_pos()) else med_button, WIDTH // 4 - (button.get_width() - med_button.get_width()) // 2, HEIGHT // 2.5 + HEIGHT // 10 * 5)
-        # draw text
-        if continue_button.collidepoint(*pygame.mouse.get_pos()):
-            if continue_idx == -1:
-                continue_idx = 0
-        else:
-            continue_idx = -1
-        draw_text(screen, font_reg, "CONTINUE", GRAY, WIDTH // 4 - button.get_width() // 2 + WIDTH // 120, HEIGHT // 2.5 - button.get_height() // 2, continue_idx)
-        if continue_idx != -1:
-            continue_idx += 1
-        if newgame_button.collidepoint(*pygame.mouse.get_pos()):
-            if newgame_idx == -1:
-                newgame_idx = 0
-        else:
-            newgame_idx = -1
-        draw_text(screen, font_reg, "NEW GAME", GRAY, WIDTH // 4 - button.get_width() // 2 + WIDTH // 120, HEIGHT // 2.5 - button.get_height() // 2 + HEIGHT // 10, newgame_idx)
-        if newgame_idx != -1:
-            newgame_idx += 1
-        if changemode_button.collidepoint(*pygame.mouse.get_pos()):
-            if changemode_idx == -1:
-                changemode_idx = 0
-        else:
-            changemode_idx = -1
-        draw_text(screen, font_reg, "CHANGE MODE", GRAY, WIDTH // 4 - button.get_width() // 2 + WIDTH // 120, HEIGHT // 2.5 - button.get_height() // 2 + HEIGHT // 10 * 2, changemode_idx)
-        if changemode_idx != -1:
-            changemode_idx += 1
-        if crosshair_button.collidepoint(*pygame.mouse.get_pos()):
-            if crosshair_idx == -1:
-                crosshair_idx = 0
-        else:
-            crosshair_idx = -1
-        draw_text(screen, font_reg, "CROSSHAIR", GRAY, WIDTH // 4 - button.get_width() // 2 + WIDTH // 120, HEIGHT // 2.5 - button.get_height() // 2 + HEIGHT // 10 * 3, crosshair_idx)
-        if crosshair_idx != -1:
-            crosshair_idx += 1
-        if setting_button.collidepoint(*pygame.mouse.get_pos()):
-            if setting_idx == -1:
-                setting_idx = 0
-        else:
-            setting_idx = -1
-        draw_text(screen, font_reg, "SETTING", GRAY, WIDTH // 4 - button.get_width() // 2 + WIDTH // 120, HEIGHT // 2.5 - button.get_height() // 2 + HEIGHT // 10 * 4, setting_idx)
-        if setting_idx != -1:
-            setting_idx += 1
-        if exit_button.collidepoint(*pygame.mouse.get_pos()):
-            if exit_idx == -1:
-                exit_idx = 0
-        else:
-            exit_idx = -1
-        draw_text(screen, font_reg, "EXIT", GRAY, WIDTH // 4 - button.get_width() // 2 + WIDTH // 120, HEIGHT // 2.5 - med_button.get_height() // 2 + HEIGHT // 10 * 5, exit_idx)
-        if exit_idx != -1:
-            exit_idx += 1
-            
-        pygame.display.flip()
-        pygame.time.delay(15)
-    save_data()
-    pygame.quit()
-    sys.exit()
-     
 def settings_func():
-    global volume_on, sound_on, music_on, music_id
     # sound, msic, exit
-    volume_idx, sound_idx, music_idx, change_idx, exit_idx = -1, -1, -1, -1, -1
+    volume_idx, sound_idx, volume_idx, change_idx, exit_idx = -1, -1, -1, -1, -1
         
     running = True
     while running:
@@ -462,40 +355,41 @@ def settings_func():
                 running = False
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if volume_button.collidepoint(event.pos):
-                    volume_on = not volume_on
-                    if volume_on:
-                        sound_on = True
-                        music_on = True
+                    volume[0] = not volume[0]
+                    if volume[0]:
+                        volume[1] = True
+                        volume[2] = True
                         pop_sound.set_volume(1)
                         button_selected_sound.set_volume(1)
-                        background_music[music_id].play(-1)
+                        background_music[volume[3]].play(-1)
                     else:
-                        sound_on = False
-                        music_on = False
+                        volume[1] = False
+                        volume[2] = False
                         pop_sound.set_volume(0)
                         button_selected_sound.set_volume(0)
-                        background_music[music_id].stop()
+                        background_music[volume[3]].stop()
+                    print(volume[0], volume[1], volume[2])
                 if sound_button.collidepoint(event.pos):
-                    sound_on = not sound_on
-                    if sound_on:
-                        volume_on = True
+                    volume[1] = not volume[1]
+                    if volume[1]:
+                        volume[0] = True
                         pop_sound.set_volume(1)
                         button_selected_sound.set_volume(1)
                     else:
                         pop_sound.set_volume(0)
                         button_selected_sound.set_volume(0)
                 if music_button.collidepoint(event.pos):
-                    music_on = not music_on
-                    if music_on:
-                        volume_on = True
-                        background_music[music_id].play(-1)
+                    volume[2] = not volume[2]
+                    if volume[2]:
+                        volume[0] = True
+                        background_music[volume[3]].play(-1)
                     else:
-                        background_music[music_id].stop()
+                        background_music[volume[3]].stop()
                 if change_button.collidepoint(event.pos):
-                    background_music[music_id].stop()
-                    music_id = (music_id + 1) % len(background_music)
-                    if music_on:
-                        background_music[music_id].play(-1)
+                    background_music[volume[3]].stop()
+                    volume[3] = (volume[3] + 1) % len(background_music)
+                    if volume[2]:
+                        background_music[volume[3]].play(-1)
                 if exit_button.collidepoint(event.pos):
                     return
         # draw
@@ -528,7 +422,7 @@ def settings_func():
                 button_selected_sound.play()
         else:
             volume_idx = -1
-        volume_text = "VOLUME : ON" if volume_on else "VOLUME : OFF"
+        volume_text = "VOLUME : ON" if volume[0] else "VOLUME : OFF"
         draw_text(screen, font_reg, volume_text, GRAY, WIDTH // 2 - font_reg.size(volume_text)[0] // 2, HEIGHT // 2.5 - font_reg.size(volume_text)[1] // 2, volume_idx)
         if volume_idx != -1:
             volume_idx += 1
@@ -538,7 +432,7 @@ def settings_func():
                 button_selected_sound.play()
         else:
             sound_idx = -1
-        sound_text = "SOUND : ON" if sound_on else "SOUND : OFF"
+        sound_text = "SOUND : ON" if volume[1] else "SOUND : OFF"
         draw_text(screen, font_reg, sound_text, GRAY, WIDTH // 2 - font_reg.size(sound_text)[0] // 2, HEIGHT // 2.5 + HEIGHT // 8 - font_reg.size(sound_text)[1] // 2, sound_idx)
         if sound_idx != -1:
             sound_idx += 1
@@ -548,7 +442,7 @@ def settings_func():
                 button_selected_sound.play()
         else:
             music_idx = -1
-        music_text = "MUSIC : ON" if music_on else "MUSIC : OFF"
+        music_text = "MUSIC : ON" if volume[2] else "MUSIC : OFF"
         draw_text(screen, font_reg, music_text, GRAY, WIDTH // 2 - font_reg.size(music_text)[0] // 2, HEIGHT // 2.5 + HEIGHT // 8 * 2 - font_reg.size(music_text)[1] // 2, music_idx)
         if music_idx != -1:
             music_idx += 1
@@ -558,7 +452,7 @@ def settings_func():
                 button_selected_sound.play()
         else:
             change_idx = -1
-        music_name = "MUSIC : " + background_music_names[music_id]
+        music_name = "MUSIC : " + background_music_names[volume[3]]
         draw_text(screen, font_reg, music_name, GRAY, WIDTH // 2 - font_reg.size(music_name)[0] // 2, HEIGHT // 2.5 + HEIGHT // 8 * 3 - font_reg.size(music_name)[1] // 2, change_idx)
         if change_idx != -1:
             change_idx += 1
@@ -732,7 +626,7 @@ def player_screen():
                         if min_id not in player.inventory:
                             mess, mess_counter = 'Choose another pokemon', 30
                             continue
-                        op = player.game(screen, min_id)
+                        op = player.game(screen, min_id, volume)
                         if op == 'quit':
                             running = False
                     if newgame_button.collidepoint(*event.pos):
@@ -746,7 +640,7 @@ def player_screen():
                         elif op == 'back':
                             continue
                         else:
-                            op = player.game(screen, min_id)
+                            op = player.game(screen, min_id, volume)
                             if op == 'quit':
                                 running = False
                     if changemode_button.collidepoint(*event.pos):

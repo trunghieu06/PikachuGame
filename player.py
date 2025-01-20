@@ -75,8 +75,6 @@ background_music_names = [
     'Nintendo Wii',
     'Sanctuary Guardians'
 ]
-volume_on, sound_on, music_on, music_id = True, True, True, 2
-background_music[music_id].play(-1)
 clock = pygame.time.Clock()
 
 def draw_img(screen, img, x, y):
@@ -565,9 +563,7 @@ class Player:
             hint1, hint2 = self.find_move(screen)
             self.grid[hint1[0]][hint1[1]] = -1
             self.grid[hint2[0]][hint2[1]] = -1
-    def game(self, screen, p_id = 0):
-        global volume_on, sound_on, music_on, music_id
-        pre_hint1, pre_hint2 = -1, -1
+    def game(self, screen, p_id, volume):
         pa_idx, exit_idx = -1, -1
         exit1_idx = -1
         last = None
@@ -576,7 +572,6 @@ class Player:
         lines = []
         mess = 'Suffling ...'
         mess_counter = 0
-        setting = False   
         running = True
         pa_button = pygame.Rect(WIDTH // 2 - button.get_width() // 2, HEIGHT // 2.1 - button.get_height() // 2, button.get_width(), button.get_height())
         exit_button = pygame.Rect(WIDTH // 2 -  med_button.get_width() // 2, HEIGHT // 2.1 + HEIGHT // 8 - med_button.get_height() // 2, med_button.get_width(), med_button.get_height())
@@ -590,7 +585,6 @@ class Player:
         removed_by_skill4 = []
         show_setting_menu = False
         floating_money = []
-        dragging = False
         while running:
             # draw background
             mouse_x, mouse_y = pygame.mouse.get_pos()
@@ -790,7 +784,7 @@ class Player:
                     if casting_skill4 <= 0:
                         self.cd = 30
                         self.out_skill4(grid_copy, removed_by_skill4)
-            if self.timer < 0:
+            if self.timer < 0 and self.mode != 'no timer':
                 self.lose = True
                 continue
             
@@ -803,9 +797,9 @@ class Player:
                 music_button = pygame.Rect(setting_center_x + 10 - 75, setting_center_y + 100 - 25, 150, 50)
                 exit1_button = pygame.Rect(setting_center_x - 75, setting_center_y + 200 - 25, 150, 50)
                 # draw button
-                draw_img_center(screen, on_button if volume_on else off_button, setting_center_x + 10, setting_center_y - 100)
-                draw_img_center(screen, on_button if sound_on else off_button, setting_center_x + 10, setting_center_y)
-                draw_img_center(screen, on_button if music_on else off_button, setting_center_x + 10, setting_center_y + 100)
+                draw_img_center(screen, on_button if volume[0] else off_button, setting_center_x + 10, setting_center_y - 100)
+                draw_img_center(screen, on_button if volume[1] else off_button, setting_center_x + 10, setting_center_y)
+                draw_img_center(screen, on_button if volume[2] else off_button, setting_center_x + 10, setting_center_y + 100)
                 draw_img_center(screen, med_button_pressed if exit1_button.collidepoint(*pygame.mouse.get_pos()) else med_button, setting_center_x, setting_center_y + 200)
                 
                 # draw text
@@ -822,9 +816,9 @@ class Player:
                 else:
                     exit1_idx = -1
                 draw_text(screen, font_reg, "EXIT", BLACK, setting_center_x - font_reg.size("EXIT")[0] // 2, setting_center_y + 200 - font_reg.size("EXIT")[1] // 2, exit1_idx)
-                draw_text_center(screen, font_reg, "ON" if volume_on else "OFF", BLACK, setting_center_x + 10, setting_center_y - 100)
-                draw_text_center(screen, font_reg, "ON" if sound_on else "OFF", BLACK, setting_center_x + 10, setting_center_y)
-                draw_text_center(screen, font_reg, "ON" if music_on else "OFF", BLACK, setting_center_x + 10, setting_center_y + 100)
+                draw_text_center(screen, font_reg, "ON" if volume[0] else "OFF", BLACK, setting_center_x + 10, setting_center_y - 100)
+                draw_text_center(screen, font_reg, "ON" if volume[1] else "OFF", BLACK, setting_center_x + 10, setting_center_y)
+                draw_text_center(screen, font_reg, "ON" if volume[2] else "OFF", BLACK, setting_center_x + 10, setting_center_y + 100)
                 
                 for event in pygame.event.get():
                     if event.type == pygame.QUIT:
@@ -835,33 +829,33 @@ class Player:
                         if stting_button.collidepoint(event.pos):
                             show_setting_menu = False
                         if volume_button.collidepoint(event.pos):
-                            volume_on = not volume_on
-                            if volume_on:
-                                sound_on, music_on = True, True
+                            volume[0] = not volume[0]
+                            if volume[0]:
+                                volume[1], volume[2] = True, True
                                 pop_sound.set_volume(1)
                                 button_selected_sound.set_volume(1)
-                                background_music[music_id].play(-1)
+                                background_music[volume[3]].play(-1)
                             else:
-                                sound_on, music_on = False, False
+                                volume[1], volume[2] = False, False
                                 pop_sound.set_volume(0)
                                 button_selected_sound.set_volume(0)
-                                background_music[music_id].stop()
+                                background_music[volume[3]].stop()
                         if sound_button.collidepoint(event.pos):
-                            sound_on = not sound_on
-                            if sound_on:
-                                volume_on = True
+                            volume[1] = not volume[1]
+                            if volume[1]:
+                                volume[0] = True
                                 pop_sound.set_volume(1)
                                 button_selected_sound.set_volume(1)
                             else:
                                 pop_sound.set_volume(0)
                                 button_selected_sound.set_volume(0)
                         if music_button.collidepoint(event.pos):
-                            music_on = not music_on
-                            if music_on:
-                                volume_on = True
-                                background_music[music_id].play(-1)
+                            volume[2] = not volume[2]
+                            if volume[2]:
+                                volume[0] = True
+                                background_music[volume[3]].play(-1)
                             else:
-                                background_music[music_id].stop()
+                                background_music[volume[3]].stop()
                     if event.type == pygame.KEYDOWN:
                         if event.key == pygame.K_ESCAPE:
                             show_setting_menu = False
@@ -1120,4 +1114,3 @@ class Player:
 if __name__ == "__main__":
     print(NO_IMAGE)
                     
-        
