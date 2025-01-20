@@ -1,2 +1,2 @@
-# PikachuGame
- python game
+# Project3
+ Pikachu Game
