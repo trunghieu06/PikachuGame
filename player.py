@@ -23,40 +23,51 @@ pygame.init()
 pygame.mixer.init()
 WIDTH, HEIGHT = 1600, 900
 SETTING_WIDTH, SETTING_HEIGHT = 800, 600
-button = pygame.image.load('button.png')
-button_pressed = pygame.image.load('button_pressed.png')
-med_button = pygame.image.load('med_button.png')
-med_button_pressed = pygame.image.load('med_button_pressed.png')
-setting_button = pygame.image.load('setting.png')
-setting_pressed_button = pygame.image.load('setting_pressed.png')
+
+# load images
+button = pygame.image.load('./Images/button.png')
+button_pressed = pygame.image.load('./Images/button_pressed.png')
+med_button = pygame.image.load('./Images/med_button.png')
+med_button_pressed = pygame.image.load('./Images/med_button_pressed.png')
+setting_button = pygame.image.load('./Images/setting.png')
+setting_pressed_button = pygame.image.load('./Images/setting_pressed.png')
+on_button, off_button = pygame.image.load('./Images/on_button.png'), pygame.image.load('./Images/off_button.png')
+skill_button = pygame.image.load('./Images/skill.png')
+skill_pressed_button = pygame.image.load('./Images/skill_pressed.png')
+fire = pygame.image.load('./Images/fire.png')
+typing_box = pygame.image.load('./Images/typing_box.png')
+frame = pygame.image.load('./Images/frame.png')
+background = pygame.image.load('./Images/background.png')
+game_background = pygame.image.load('./Images/game_background.png')
+setting_background = pygame.image.load('./Images/setting_background.png')
+pokemon_ball = pygame.image.load('./Images/pokemon_ball.png')
+lightning_img = pygame.image.load('./Images/lightning.png')
+tick = pygame.image.load('./Images/tick.png')
+pokemon_background = pygame.image.load('./Images/pokemon_background.png')
+
+# scale images
 setting_button = pygame.transform.scale(setting_button, (100, 100))
 setting_pressed_button = pygame.transform.scale(setting_pressed_button, (100, 100))
-on_button, off_button = pygame.image.load('on_button.png'), pygame.image.load('off_button.png')
-skill_button = pygame.image.load('skill.png')
-skill_pressed_button = pygame.image.load('skill_pressed.png')
-skill_button, skill_pressed_button = pygame.transform.scale(skill_button, (100, 100)), pygame.transform.scale(skill_pressed_button, (100, 100))
-fire = pygame.image.load('fire.png')
-fire = pygame.transform.scale(fire, (80, 80))
 on_button = pygame.transform.scale(on_button, (100, 50))
 off_button = pygame.transform.scale(off_button, (100, 50))
-typing_box = pygame.image.load('typing_box.png')
-frame = pygame.image.load('frame.png')
-background = pygame.image.load('background.png')
-game_background = pygame.image.load('game_background.png')
+skill_button, skill_pressed_button = pygame.transform.scale(skill_button, (100, 100)), pygame.transform.scale(skill_pressed_button, (100, 100))
+fire = pygame.transform.scale(fire, (80, 80))
 background = pygame.transform.scale(background, (int(WIDTH * 1.2), int(HEIGHT * 1.2)))
 game_background = pygame.transform.scale(game_background, (int(WIDTH * 1.2), int(HEIGHT * 1.2)))
-setting_background = pygame.image.load('setting_background.png')
-pokemon_background = pygame.image.load('pokemon_background.png')
-pokemon_ball = pygame.image.load('pokemon_ball.png')
+tick = pygame.transform.scale(tick, (30, 30))
 pokemon_background = pygame.transform.scale(pokemon_background, (170, 170))
 pokemon_ball = pygame.transform.scale(pokemon_ball, (170, 170))
 setting_background.set_alpha(240)
 bg_width, bg_height = background.get_size()
-font_logo = pygame.font.Font('Knewave-Regular.ttf', 100)
-# font_mess = pygame.font.Font('Anton-Regular.ttf', 80)
-font_big = pygame.font.Font('Anton-Regular.ttf', 60)
-font_reg = pygame.font.Font('Anton-Regular.ttf', 32)
-font_mini = pygame.font.Font('Anton-Regular.ttf', 20)
+
+# load font
+font_logo = pygame.font.Font('./Fonts/Knewave-Regular.ttf', 100)
+font_mess = pygame.font.Font('./Fonts/Anton-Regular.ttf', 80)
+font_big = pygame.font.Font('./Fonts/Anton-Regular.ttf', 60)
+font_reg = pygame.font.Font('./Fonts/Anton-Regular.ttf', 32)
+font_mini = pygame.font.Font('./Fonts/Anton-Regular.ttf', 20)
+
+# load pokemon images
 IMAGE_SIZE = (50, 40)
 path = [i.replace('\\', '/') for i in glob.glob('./DataSet/*.png')]
 NO_IMAGE = len(path)
@@ -65,8 +76,13 @@ path = [i.replace('\\', '/') for i in glob.glob('./Pokemon/*.png')]
 NO_CHAR = len(path)
 character_images = [pygame.image.load(path[i]) for i in range(NO_CHAR)]
 character_images = [pygame.transform.scale(i, (120, 120)) for i in character_images]
+
+# load sound
 button_selected_sound = pygame.mixer.Sound('Sound/button_selected.mp3')
 pop_sound = pygame.mixer.Sound('Sound/pop.mp3')
+electric_sound = pygame.mixer.Sound('Sound/electric.mp3')
+winning_sound = pygame.mixer.Sound('Sound/winning.mp3')
+winning_sound.set_volume(0.5)
 path = [i.replace('\\', '/') for i in glob.glob('./Background music/*.mp3')]
 background_music = [pygame.mixer.Sound(path[i]) for i in range(len(path))]
 background_music_names = [
@@ -75,6 +91,8 @@ background_music_names = [
     'Nintendo Wii',
     'Sanctuary Guardians'
 ]
+
+
 clock = pygame.time.Clock()
 
 def draw_img(screen, img, x, y):
@@ -134,8 +152,13 @@ class Player:
         for i in range(1, self.row + 1):
             self.cods[i][0] = (self.cods[i][1][0] - IMAGE_SIZE[1], self.cods[i][1][1])
             self.cods[i][self.col + 1] = (self.cods[i][self.col][0] + IMAGE_SIZE[1], self.cods[i][self.col][1])
+        for i in range(1, self.row + 1):
+            for j in range(1, self.col + 1):
+                if self.grid[i][j] != -1:
+                    return
         self.reset_grid()
     def reset_grid(self):
+        print('reset grid called')
         if self.timer != -100:
             self.timer = self.row * self.col
         self.cods = [[-1] * (self.col + 3) for _ in range(self.row + 3)]
@@ -544,7 +567,6 @@ class Player:
                     self.grid[i][j + 1] = self.grid[i][j]
                     
     def out_skill4(self, old, removed):
-        print('out skill4 called')
         print(removed)
         for i in range(1, self.row + 1):
             for j in range(1, self.col + 1):
@@ -585,6 +607,10 @@ class Player:
         removed_by_skill4 = []
         show_setting_menu = False
         floating_money = []
+        lightning = lightning_img
+        lightning_x, lightning_y = -1, -1
+        first_winning_sound = False
+        draw_lightning = 0
         while running:
             # draw background
             mouse_x, mouse_y = pygame.mouse.get_pos()
@@ -628,7 +654,6 @@ class Player:
                         if pa_button.collidepoint(event.pos):
                             print('play again')
                             op = self.choose_size(screen)
-                            pre_hint1, pre_hint2 = -1, -1
                             last = None
                             drawing = False
                             draw_counter = 0
@@ -649,6 +674,9 @@ class Player:
                 continue
             
             if self.is_winning() == True:
+                if first_winning_sound == False:
+                    first_winning_sound = True
+                    winning_sound.play()
                 draw_text_center(screen, font_logo, "YOU WIN", GRAY, WIDTH // 2, HEIGHT // 4)
                 
                 # draw button
@@ -699,7 +727,10 @@ class Player:
                 pygame.display.flip()
                 pygame.time.delay(15)
                 continue
-            
+            else:
+                winning_sound.stop()
+                first_winning_sound = False
+                
             # draw_text_center(screen, font_logo, "PIKACHU GAME", GRAY, WIDTH // 2, HEIGHT // 4)
             
             if mess_counter > 0:
@@ -730,6 +761,11 @@ class Player:
                             img_copy.set_alpha(150)
                         x, y = self.cods[i + 1][j + 1]
                         draw_img_center(screen, img_copy, x, y)
+            
+            # draw skill 2
+            if draw_lightning > 0:
+                draw_lightning -= 1
+                draw_img(screen, lightning, lightning_x - IMAGE_SIZE[0] // 2, lightning_y - IMAGE_SIZE[1] // 2)
 
             # settings and skill
             draw_img_center(screen, setting_pressed_button if stting_button.collidepoint(pygame.mouse.get_pos()) else setting_button, 120, 120)
@@ -833,11 +869,15 @@ class Player:
                             if volume[0]:
                                 volume[1], volume[2] = True, True
                                 pop_sound.set_volume(1)
+                                electric_sound.set_volume(1)
+                                winning_sound.set_volume(1)
                                 button_selected_sound.set_volume(1)
                                 background_music[volume[3]].play(-1)
                             else:
                                 volume[1], volume[2] = False, False
                                 pop_sound.set_volume(0)
+                                electric_sound.set_volume(0)
+                                winning_sound.set_volume(0)
                                 button_selected_sound.set_volume(0)
                                 background_music[volume[3]].stop()
                         if sound_button.collidepoint(event.pos):
@@ -845,9 +885,13 @@ class Player:
                             if volume[1]:
                                 volume[0] = True
                                 pop_sound.set_volume(1)
+                                electric_sound.set_volume(1)
+                                winning_sound.set_volume(1)
                                 button_selected_sound.set_volume(1)
                             else:
                                 pop_sound.set_volume(0)
+                                electric_sound.set_volume(0)
+                                winning_sound.set_volume(0)
                                 button_selected_sound.set_volume(0)
                         if music_button.collidepoint(event.pos):
                             volume[2] = not volume[2]
@@ -878,7 +922,19 @@ class Player:
                                         if self.grid[i + 1][j + 1] == self.grid[last[0]][last[1]]:
                                             if casting_skill2 == True:
                                                 self.grid[i + 1][j + 1], self.grid[last[0]][last[1]] = -1, -1
-                                                pop_sound.play()
+                                                st, en = (i + 1, j + 1), last
+                                                if st[1] > en[1]:
+                                                    st, en = en, st
+                                                lightning = pygame.transform.scale(lightning_img, (abs(j + 1 - last[1]) * 40 + 40, abs(i + 1 - last[0]) * 50 + 50))
+                                                if st[0] < en[0]:
+                                                    lightning = pygame.transform.flip(lightning, False, True)
+                                                    lightning_x, lightning_y = self.cods[st[0]][st[1]][0], self.cods[st[0]][st[1]][1]
+                                                else:
+                                                    lightning_x, lightning_y = self.cods[st[0]][st[1]][0], self.cods[en[0]][en[1]][1]
+                                                # draw_img(screen, lightning, self.cods[st[0]][st[1]][0], self.cods[st[0]][st[1]][1])
+                                                draw_lightning = 10
+                                                pygame.display.flip()
+                                                electric_sound.play()
                                                 last = None
                                                 casting_skill2 = False
                                                 self.cd = 30
@@ -891,15 +947,17 @@ class Player:
                                                 self.grid[i + 1][j + 1], self.grid[last[0]][last[1]] = -1, -1
                                                 self.timer += 1
                                                 self.timer = min(self.timer, self.row * self.col * 2)
+                                                bonus = 0
                                                 if self.mode == 'no timer':
-                                                    self.cash += 2
-                                                    floating_money.append([WIDTH - 120, HEIGHT - 150, 2])
+                                                    bonus = 2
                                                 elif self.mode == 'timer':
-                                                    self.cash += 4
-                                                    floating_money.append([WIDTH - 120, HEIGHT - 150, 4])
-                                                else:
-                                                    self.cash += 6
-                                                    floating_money.append([WIDTH - 120, HEIGHT - 150, 6])
+                                                    bonus = 4
+                                                elif self.mode == 'devil':
+                                                    bonus = 6
+                                                if p_id == 0:
+                                                    bonus = bonus * 3 // 2 
+                                                self.cash += bonus
+                                                floating_money.append([WIDTH - 120, HEIGHT - 150, bonus])
                                                 pop_sound.play()
                                                 drawing, draw_counter = True, 20
                                         last = None
@@ -997,23 +1055,28 @@ class Player:
                     else:
                         idx[i] = -1
                 draw_text(screen, font_reg, text[i], GRAY, WIDTH // 2 - font_reg.size(text[i])[0] // 2, HEIGHT // 2.7 + HEIGHT // 6 * i - font_reg.size(text[i])[1] // 2, idx[i])
-            
+            if self.mode == 'no timer':
+                draw_img_center(screen, tick, WIDTH // 2 + button.get_width() // 2 - 20, HEIGHT // 2.7)
+            elif self.mode == 'timer':
+                draw_img_center(screen, tick, WIDTH // 2 + button.get_width() // 2 - 20, HEIGHT // 2.7 + HEIGHT // 6)
+            elif self.mode == 'devil':
+                draw_img_center(screen, tick, WIDTH // 2 + button.get_width() // 2 - 20, HEIGHT // 2.7 + HEIGHT // 6 * 2)
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     return 'quit'
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if button_[0].collidepoint(event.pos):
                         self.mode = 'no timer'
-                        return 'no timer'
+                        # return 'no timer'
                     if button_[1].collidepoint(event.pos):
                         self.mode = 'timer'
                         self.timer = self.row * self.col * 2
                         print(self.timer, self.row, self.col)
-                        return 'timer'
+                        # return 'timer'
                     if button_[2].collidepoint(event.pos):
                         self.mode = 'devil'
                         self.timer = self.row * self.col * 2
-                        return 'devil'
+                        # return 'devil'
                     if exit_button.collidepoint(event.pos):
                         return 'back'
             

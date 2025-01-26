@@ -108,9 +108,9 @@ def login_func():
                     status = 'username'
                 if password_box.collidepoint(*event.pos):
                     status = 'password'
-                if exit_button.collidepoint(*event.pos):
+                if exit_button.collidepoint(*event.pos):    
                     return -1
-            if event.type == pygame.KEYDOWN:
+            if event.type == pygame.KEYDOWN:    
                 if status == 'username':
                     if event.key == pygame.K_BACKSPACE:
                         username = username[:-1]
@@ -360,12 +360,16 @@ def settings_func():
                         volume[1] = True
                         volume[2] = True
                         pop_sound.set_volume(1)
+                        electric_sound.set_volume(1)
+                        winning_sound.set_volume(1)
                         button_selected_sound.set_volume(1)
                         background_music[volume[3]].play(-1)
                     else:
                         volume[1] = False
                         volume[2] = False
                         pop_sound.set_volume(0)
+                        electric_sound.set_volume(0)
+                        winning_sound.set_volume(0)
                         button_selected_sound.set_volume(0)
                         background_music[volume[3]].stop()
                     print(volume[0], volume[1], volume[2])
@@ -374,9 +378,13 @@ def settings_func():
                     if volume[1]:
                         volume[0] = True
                         pop_sound.set_volume(1)
+                        electric_sound.set_volume(1)
+                        winning_sound.set_volume(1)
                         button_selected_sound.set_volume(1)
                     else:
                         pop_sound.set_volume(0)
+                        electric_sound.set_volume(0)
+                        winning_sound.set_volume(0)
                         button_selected_sound.set_volume(0)
                 if music_button.collidepoint(event.pos):
                     volume[2] = not volume[2]
