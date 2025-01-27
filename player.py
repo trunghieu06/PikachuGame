@@ -800,10 +800,13 @@ class Player:
                 # print(self.timer, self.row, self.col)
                 pygame.draw.rect(screen, self.timer_color(ratio) if casting_skill3 <= 0 else ICE_BLUE, (120 - 25, 200 + 600 * (1 - ratio), 50, 600 * ratio))
             if show_setting_menu == False:
-                if self.mode == 'timer':
-                    self.timer -= 1 / 60
-                elif self.mode == 'devil':
-                    self.timer -= 1 / 30
+                if casting_skill3 <= 0:  # Nếu không kích hoạt skill "đóng băng thời gian"
+                    if self.mode == 'timer':
+                        self.timer -= 1 / 60
+                    elif self.mode == 'devil':
+                        self.timer -= 1 / 30
+                else:
+                    casting_skill3 -= 1 / 60  # Giảm thời gian đóng băng skill (5 giây)
             if show_setting_menu == False:
                 if casting_skill3 > 0:
                     if self.mode != 'devil':
@@ -971,10 +974,11 @@ class Player:
                             elif p_id == 2:
                                 casting_skill2 = True
                             elif p_id == 3:
-                                if self.timer == -100:
-                                    self.cd = 30
-                                else:
+                                if self.timer != -100:
+                                
                                     casting_skill3 = 5
+                                    self.cd = 30
+                                        
                             elif p_id == 4:
                                 casting_skill4 = 4
                                 grid_copy = [[-1] * (self.col + 3) for _ in range(self.row + 3)]
@@ -1104,7 +1108,7 @@ class Player:
             (WIDTH // 6, HEIGHT // 2.7 + HEIGHT // 5 * 2),
             (WIDTH // 2.1 + WIDTH // 6, HEIGHT // 2.7 + HEIGHT // 5 * 2)
         ]
-        prices = [0, 100, 200, 500, 3000, 3000]
+        prices = [0, 0, 0, 00, 000, 000]
         checking = -1
         mess = "NOT ENOUGH MONEY"
         mess_counter = 0
