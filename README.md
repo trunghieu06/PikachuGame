@@ -1,2 +1,2 @@
-# Project3
- Pikachu Game
+# Project Pikachu Game
+ Pikachu Game - By HTTi
