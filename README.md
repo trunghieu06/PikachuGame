@@ -6,7 +6,7 @@
 
 Để chạy được trò chơi, bạn cần:
 
-- **Python**: Phiên bản từ 3.8 trở lên.
+- **Python**: Phiên bản từ 3.11.6.
 - **Thư viện Python**:
   - `pygame`
   - Các thư viện tích hợp sẵn như `random`, `sys`, `os`, `glob`, `math`, `json`, `time`.
