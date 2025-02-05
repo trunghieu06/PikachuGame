@@ -800,22 +800,21 @@ class Player:
                 # print(self.timer, self.row, self.col)
                 pygame.draw.rect(screen, self.timer_color(ratio) if casting_skill3 <= 0 else ICE_BLUE, (120 - 25, 200 + 600 * (1 - ratio), 50, 600 * ratio))
             if show_setting_menu == False:
-                if casting_skill3 <= 0:  # Nếu không kích hoạt skill "đóng băng thời gian"
-                    if self.mode == 'timer':
-                        self.timer -= 1 / 60
-                    elif self.mode == 'devil':
-                        self.timer -= 1 / 30
-                else:
-                    casting_skill3 -= 1 / 60  # Giảm thời gian đóng băng skill (5 giây)
+                if self.mode == 'timer':
+                    self.timer -= 1 / 60
+                elif self.mode == 'devil':
+                    self.timer -= 1 / 30
             if show_setting_menu == False:
                 if casting_skill3 > 0:
                     if self.mode != 'devil':
                         casting_skill3 -= 1 / 60
+                        self.timer += 1 / 60
                     else:
                         casting_skill3 -= 1 / 30
+                        self.timer += 1 / 30
                     if casting_skill3 <= 0:
                         self.cd = 30
-                if casting_skill4 > 0:
+                if casting_skill4 > 0: 
                     if self.mode != 'devil':
                         casting_skill4 -= 1 / 60
                     else:
@@ -1108,7 +1107,7 @@ class Player:
             (WIDTH // 6, HEIGHT // 2.7 + HEIGHT // 5 * 2),
             (WIDTH // 2.1 + WIDTH // 6, HEIGHT // 2.7 + HEIGHT // 5 * 2)
         ]
-        prices = [0, 0, 0, 00, 000, 000]
+        prices = [0, 100, 200, 500, 3000, 3000]
         checking = -1
         mess = "NOT ENOUGH MONEY"
         mess_counter = 0
